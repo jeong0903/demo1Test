@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상품관리</title>
+  <style>
+    .fieldErrorMsg {color:red; font-weight:bold; font-size:0.8rem;}
+    .fieldError { border:1px solid red; }
+  </style>
+  <script type="module">
+    [...document.querySelectorAll('.fieldErrorMsg')].forEach(ele=>ele.textContent = ele.innerHTML.replace('<br>',' / '));
+
+    frm.addEventListener('submit',e=>{
+      e.preventDefault();  // 기본 이벤트 막기
+      console.log('submit이벤트');
+      //유효성체크
+      if(pname.value.trim().length === 0) {
+        errPname.textContent = '상품명은 필수 입니다';
+        pname.focus();
+        return;
+      }
+      if(quantity.value.trim().length === 0) {
+        errQuantity.textContent = '수량은 필수 입니다';
+        quantity.focus();
+        return;
+      }
+      if(price.value.trim().length === 0) {
+        errPrice.textContent = '가격은 필수 입니다';
+        price.focus();
+        return;
+      }
+
+      //이상없으면 요청메세지 만들어서 전송
+      frm.submit();
+    });
+  </script>
+</head>
+<body>
+<h3 >상품등록</h3>
+
+<!--전체 폼에 대한 오류메세지 표시-->
+<div class="fieldErrorMsg" th:errors="${saveForm}">...</div>
+
+<form id="frm" action="" method="post" th:object="${saveForm}">
+  <div>
+    <label for="pname" >상품명</label>
+    <input type="text" id="pname" name="pname" maxlength="10" th:field="*{pname}" th:class="${#fields.hasErrors('pname')} ? fieldError : fieldSuccess">
+<!-- 서버측  유효성 검사  -->
+    <span class="fieldErrorMsg" th:errors="*{pname}"></span>
+<!-- 클라이언트 측  유효성 검사  -->
+    <span class="fieldErrorMsg client" id="errPname"></span>
+  </div>
+  <div>
+    <label for="quantity" >수량</label>
+    <input type="text" id="quantity" name="quantity" maxlength="10" th:field="*{quantity}" th:errorclass="fieldError">
+    <span class="fieldErrorMsg" th:errors="*{quantity}"></span>
+    <span class="fieldErrorMsg client" id="errQuantity"></span>
+  </div>
+  <div><label for="price" >가격</label>
+    <input type="text" id="price" name="price" th:field="*{price}" th:class="${#fields.hasErrors('price')}? fieldError : fieldSuccess">
+    <span class="fieldErrorMsg" th:errors="*{price}"></span>
+    <span class="fieldErrorMsg client" id="errPrice"></span>
+  </div>
+  <div><input type="submit" value="등록" ></div>
+</form>
+</body>
+</html>
